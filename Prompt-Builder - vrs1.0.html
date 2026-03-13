@@ -3,59 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PromptForge — Propiedad de Marco Porras</title>
+<title>PromptForge PRO — Marco Porras</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root { --bg: #0a0a0f; --surface: #11111a; --surface2: #1a1a28; --border: #2a2a42; --accent: #7c5cfc; --accent2: #fc5c7d; --text: #e8e8f0; --muted: #7070a0; }
-  body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; margin: 0; }
-  .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
-  header { text-align: center; margin-bottom: 40px; }
-  h1 { font-family: 'Syne', sans-serif; font-size: 2.5rem; background: linear-gradient(135deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 15px; }
-  textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 8px; resize: vertical; }
-  .output-panel { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 2px solid var(--accent); padding: 20px; text-align: center; }
-  #outputText { background: #000; padding: 10px; border-radius: 5px; margin-bottom: 10px; max-height: 80px; overflow-y: auto; font-size: 11px; color: var(--accent3); }
-  .btn { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-  .legal-tag { font-size: 10px; color: var(--muted); margin-top: 10px; }
+  /* Mantenemos tu estética corporativa original */
+  :root { --bg: #0a0a0f; --surface: #11111a; --surface2: #1a1a28; --border: #2a2a42; --accent: #7c5cfc; --accent2: #fc5c7d; --accent3: #5cf0c8; --text: #e8e8f0; --muted: #7070a0; }
+  body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; margin: 0; }
+  .container { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 40px 24px 150px; }
+  header { text-align: center; margin-bottom: 48px; }
+  .logo { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  h1 { font-family: 'Syne', sans-serif; font-size: 3.2rem; font-weight: 800; background: linear-gradient(135deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
+  .section { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 16px; padding: 20px; transition: 0.3s; }
+  .section:focus-within { border-color: var(--accent); box-shadow: 0 0 20px rgba(124, 92, 252, 0.2); }
+  textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); padding: 12px; font-family: 'JetBrains Mono'; font-size: 13px; outline: none; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 10px; }
+  .btn-opt { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); padding: 8px; border-radius: 8px; cursor: pointer; font-size: 11px; transition: 0.2s; }
+  .btn-opt.selected { border-color: var(--accent); color: var(--accent); background: rgba(124,92,252,0.1); }
+  .output-panel { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 2px solid var(--accent); padding: 25px; z-index: 1000; display: flex; flex-direction: column; align-items: center; }
+  #outputText { width: 100%; max-width: 800px; background: #000; padding: 15px; border-radius: 8px; font-size: 12px; max-height: 100px; overflow-y: auto; white-space: pre-wrap; margin-bottom: 15px; border: 1px dashed var(--accent); }
+  .actions { display: flex; gap: 15px; }
+  .btn-main { background: var(--accent); color: white; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; font-weight: 800; font-family: 'Syne'; text-transform: uppercase; }
+  .legal-disclaimer { font-size: 9px; color: var(--muted); margin-top: 10px; }
 </style>
 </head>
 <body>
 
 <div class="container">
   <header>
-    <h1>PromptForge</h1>
-    <p>Arquitectura Propietaria de Marco Porras</p>
+    <div class="logo">Enterprise Solutions</div>
+    <h1>PromptForge PRO</h1>
+    <p>Framework de Ingeniería de Prompts — v1.0</p>
   </header>
 
+  <div class="section"><strong>👤 ROL Y PERFIL PROFESIONAL</strong><textarea id="rol" rows="3" oninput="u()"></textarea></div>
+  <div class="section"><strong>📝 CONTEXTO Y ANTECEDENTES</strong><textarea id="contexto" rows="3" oninput="u()"></textarea></div>
+  <div class="section"><strong>🎯 TAREA ESPECÍFICA</strong><textarea id="tarea" rows="3" oninput="u()"></textarea></div>
+  <div class="section"><strong>🚫 RESTRICCIONES Y LÍMITES</strong><textarea id="restricciones" rows="3" oninput="u()"></textarea></div>
+  <div class="section"><strong>🧠 PENSAMIENTO Y RAZONAMIENTO</strong><textarea id="razonamiento" rows="2" oninput="u()"></textarea></div>
+
   <div class="section">
-    <strong>ROL</strong>
-    <textarea id="r" placeholder="Ej: Experto en marketing..."></textarea>
-  </div>
-  <div class="section">
-    <strong>CONTEXTO</strong>
-    <textarea id="c"></textarea>
-  </div>
-  <div class="section">
-    <strong>TAREA</strong>
-    <textarea id="t"></textarea>
-  </div>
-  <div class="section">
-    <strong>RESTRICCIONES</strong>
-    <textarea id="re"></textarea>
+    <strong>🎨 TONO DE RESPUESTA</strong>
+    <div class="grid">
+      <button class="btn-opt" onclick="t(this, 'Profesional')">Profesional</button>
+      <button class="btn-opt" onclick="t(this, 'Creativo')">Creativo</button>
+      <button class="btn-opt" onclick="t(this, 'Directo')">Directo</button>
+      <button class="btn-opt" onclick="t(this, 'Analítico')">Analítico</button>
+    </div>
   </div>
 </div>
 
 <div class="output-panel">
-  <div id="outputText">Complete los campos...</div>
-  <button class="btn" onclick="cp()">📋 Copiar Prompt Perfecto</button>
-  <p class="legal-tag">© 2026 Marco Antonio Porras León. Todos los derechos reservados.</p>
+  <div id="outputText">Inicie la configuración del prompt profesional...</div>
+  <div class="actions">
+    <button class="btn-main" onclick="cp()">📋 Copiar para IA</button>
+    <button onclick="ex()" style="background:transparent; border:1px solid var(--muted); color:white; cursor:pointer; padding:10px; border-radius:8px;">Descargar .TXT</button>
+  </div>
+  <p class="legal-disclaimer">Propiedad Intelectual de Marco Antonio Porras León. Licencia corporativa requerida.</p>
 </div>
 
 <script>
-/** * CÓDIGO OFUSCADO - PROPIEDAD PRIVADA DE MARCO PORRAS 
- * Prohibida su ingeniería inversa.
+/** * ALGORITMO PROPIETARIO - PROTEGIDO POR LEY DE DERECHOS DE AUTOR
+ * MARCO ANTONIO PORRAS LEÓN
  */
-const _0x1a=document;const _0x5b=['r','c','t','re'];const _0x4f=()=>_0x5b['map'](id=>_0x1a['getElementById'](id)['value']);const _0x9e=()=>{const[_0x1,_0x2,_0x3,_0x4]=_0x4f();let _0x5='';if(_0x1)_0x5+=`## ROL\n${_0x1}\n\n`;if(_0x2)_0x5+=`## CONTEXTO\n${_0x2}\n\n`;if(_0x3)_0x5+=`## TAREA\n${_0x3}\n\n`;if(_0x4)_0x5+=`## RESTRICCIONES\n${_0x4}\n\n`;_0x1a['getElementById']('outputText')['textContent']=_0x5||'Complete los campos...';};_0x5b['forEach'](id=>_0x1a['getElementById'](id)['addEventListener']('input',_0x9e));function cp(){const t=_0x1a['getElementById']('outputText')['textContent'];navigator['clipboard']['writeText'](t);alert('Copiado. Propiedad de Marco Porras.');}
+let _ts=[];const _i=['rol','contexto','tarea','restricciones','razonamiento'];function t(e,v){e.classList.toggle('selected');if(_ts.includes(v)){_ts=_ts.filter(x=>x!==v)}else{_ts.push(v)}u()}function u(){let p='';const d=_i.reduce((a,c)=>{a[c]=document.getElementById(c).value;return a},{});if(d.rol)p+=`## ROL PROFESIONAL\n${d.rol}\n\n`;if(d.contexto)p+=`## CONTEXTO\n${d.contexto}\n\n`;if(d.tarea)p+=`## OBJETIVO\n${d.tarea}\n\n`;if(_ts.length>0)p+=`## TONO REQUERIDO\n${_ts.join(', ')}\n\n`;if(d.restricciones)p+=`## LIMITACIONES\n${d.restricciones}\n\n`;if(d.razonamiento)p+=`## PROCESO DE RAZONAMIENTO\n${d.razonamiento}\n\n`;document.getElementById('outputText').textContent=p||'Inicie la configuración...'}function cp(){const x=document.getElementById('outputText').textContent;navigator.clipboard.writeText(x);alert("Prompt Corporativo Copiado.\nAutor: Marco Porras");}function ex(){const x=document.getElementById('outputText').textContent;if(!x)return;const b=new Blob([x],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prompt-pro.txt';a.click();}
 </script>
 
 </body>
