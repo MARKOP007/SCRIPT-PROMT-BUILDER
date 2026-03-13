@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PromptForge — Constructor de Prompts IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #11111a;
+    --surface2: #1a1a28;
+    --border: #2a2a42;
+    --accent: #7c5cfc;
+    --accent2: #fc5c7d;
+    --accent3: #5cf0c8;
+    --text: #e8e8f0;
+    --muted: #7070a0;
+    --glow: rgba(124, 92, 252, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Fondo animado */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(124,92,252,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 30% at 80% 80%, rgba(252,92,125,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 30%, var(--accent) 70%, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* Secciones */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .section:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--glow), 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .section-icon {
+    font-size: 18px;
+    width: 32px;
+    text-align: center;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .section-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: var(--surface2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    letter-spacing: 1px;
+  }
+
+  .section-badge.required {
+    background: rgba(124,92,252,0.15);
+    color: var(--accent);
+    border-color: rgba(124,92,252,0.3);
+  }
+
+  .section-body {
+    padding: 16px 20px 20px;
+  }
+
+  .hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    line-height: 1.6;
+    letter-spacing: 0.5px;
+  }
+
+  textarea, input[type="text"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 12px 16px;
+    resize: vertical;
+    transition: border-color 0.2s, background 0.2s;
+    outline: none;
+    line-height: 1.6;
+  }
+
+  textarea:focus, input[type="text"]:focus {
+    border-color: var(--accent);
+    background: rgba(124,92,252,0.05);
+  }
+
+  textarea::placeholder, input::placeholder {
+    color: var(--muted);
+    opacity: 0.7;
+  }
+
+  /* Chips de ejemplos rápidos */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .chip {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+
+  .chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(124,92,252,0.1);
+  }
+
+  /* Formato checkboxes */
+  .formato-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .formato-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .formato-option:hover {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .formato-option input { display: none; }
+
+  .formato-option.selected {
+    border-color: var(--accent);
+    background: rgba(124,92,252,0.12);
+    color: var(--accent);
+  }
+
+  /* Tono slider */
+  .tono-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .tono-btn {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  .tono-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+  .tono-btn.selected {
+    border-color: var(--accent3);
+    background: rgba(92,240,200,0.1);
+    color: var(--accent3);
+  }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 24px 0;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Output */
+  .output-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+
+  .output-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .output-body {
+    padding: 20px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 120px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .output-body:empty::after {
+    content: 'Tu prompt aparecerá aquí en tiempo real...';
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* Botones de acción */
+  .actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #9c6dff);
+    color: white;
+    flex: 1;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(124,92,252,0.4);
+  }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-danger {
+    background: var(--surface2);
+    color: var(--accent2);
+    border: 1px solid rgba(252,92,125,0.3);
+  }
+  .btn-danger:hover {
+    background: rgba(252,92,125,0.1);
+    border-color: var(--accent2);
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: var(--accent);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: all 0.3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Highlight en output */
+  .tag-highlight {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .formato-grid { grid-template-columns: repeat(2, 1fr); }
+    .tono-grid { grid-template-columns: repeat(3, 1fr); }
+    .actions { flex-direction: column; }
+    .btn-primary { flex: unset; }
+  }
+
+  /* Animación de entrada */
+  .section { animation: fadeUp 0.4s ease both; }
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.2s; }
+  .section:nth-child(5) { animation-delay: 0.25s; }
+  .section:nth-child(6) { animation-delay: 0.3s; }
+  .section:nth-child(7) { animation-delay: 0.35s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="logo">⚡ PromptForge</div>
+    <h1>Constructor de<br>Prompts IA</h1>
+    <p class="subtitle">// Estructura • Precisión • Resultados</p>
+  </header>
+
+  <!-- ROL -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎭</span>
+      <span class="section-title">Rol / Persona</span>
+      <span class="section-badge required">RECOMENDADO</span>
+    </div>
+    <div class="section-body">
+      <p class="hint">Define quién debe ser la IA. Cuanto más específico, mejor performance.</p>
+      <input type="text" id="rol" placeholder="Ej: Eres un experto en marketing digital con 15 años de experiencia en startups SaaS..." oninput="generarPrompt()">
+      <div class="chips">
+        <span class="chip" onclick="setChip('rol', 'Eres un experto programador senior en Python y arquitectura de software')">👨‍💻 Dev Senior</span>
+        <span class="chip" onclick="setChip('rol', 'Eres un consultor estratégico de negocios con MBA y experiencia en Fortune 500')">💼 Consultor</span>
+        <span class="chip" onclick="setChip('rol', 'Eres un redactor creativo especializado en copywriting persuasivo y SEO')">✍️ Copywriter</span>
+        <span class="chip" onclick="setChip('rol', 'Eres un científico de datos con expertise en machine learning y estadística avanzada')">📊 Data Scientist</span>
+        <span class="chip" onclick="setChip('rol', 'Eres un profesor universitario que explica conceptos complejos de forma simple')">🎓 Profesor</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTEXTO -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🌍</span>
+      <span class="section-title">Contexto / Situación</span>
+      <span class="section-badge required">RECOMENDADO</span>
+    </div>
+    <div class="section-body">
+      <p class="hint">Proporciona el fondo del problema. ¿Quién eres? ¿Cuál es la situación actual? ¿Qué ya sabes?</p>
+      <textarea id="contexto" rows="3" placeholder="Ej: Estoy lanzando una app de fitness para el mercado latinoamericano. Mi audiencia objetivo son mujeres de 25-40 años. Ya tenemos 500 usuarios beta con feedback positivo..." oninput="generarPrompt()"></textarea>
+    </div>
+  </div>
+
+  <!-- TAREA -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎯</span>
+      <span class="section-title">Tarea Principal</span>
+      <span class="section-badge required">OBLIGATORIO</span>
+    </div>
+    <div class="section-body">
+      <p class="hint">¿Qué necesitas exactamente? Sé específico con verbos de acción: crea, analiza, redacta, resume, compara...</p>
+      <textarea id="tarea" rows="3" placeholder="Ej: Crea una estrategia de contenido para redes sociales con 30 ideas de posts para el próximo mes, incluyendo copywriting para cada uno..." oninput="generarPrompt()"></textarea>
+    </div>
+  </div>
+
+  <!-- EJEMPLOS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">💡</span>
+      <span class="section-title">Ejemplos / Referencias</span>
+      <span class="section-badge">OPCIONAL</span>
+    </div>
+    <div class="section-body">
+      <p class="hint">Muestra ejemplos de lo que quieres (few-shot). Incluye ejemplos del estilo, formato o calidad que esperas.</p>
+      <textarea id="ejemplos" rows="3" placeholder="Ej: Quiero algo similar al estilo de comunicación de Apple: minimalista, emocional, enfocado en el beneficio. Ejemplo de tono: 'No es una app. Es tu entrenador personal.'..." oninput="generarPrompt()"></textarea>
+    </div>
+  </div>
+
+  <!-- RESTRICCIONES -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🚫</span>
+      <span class="section-title">Restricciones / Lo que NO quieres</span>
+      <span class="section-badge">OPCIONAL</span>
+    </div>
+    <div class="section-body">
+      <p class="hint">Define límites claros. Qué evitar, qué no incluir, qué suposiciones no hacer.</p>
+      <textarea id="restricciones" rows="3" placeholder="Ej: No uses jerga técnica. No incluyas referencias a competidores. Evita clichés como 'revolucionario' o 'disruptivo'. No más de 280 caracteres por post..." oninput="generarPrompt()"></textarea>
+    </div>
+  </div>
+
+  <!-- TONO -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎨</span>
+      <span class="section-title">Tono / Estilo</span>
+      <span class="section-badge">OPCIONAL</span>
+    </div>
+    <div class="section-body">
+      <p class="hint">Selecciona uno o más tonos deseados para la respuesta.</p>
+      <div class="tono-grid" id="tonoGrid">
+        <button class="tono-btn" onclick="toggleTono(this, 'Profesional')">💼 Profesional</button>
+        <button class="tono-btn" onclick="toggleTono(this, 'Casual')">😊 Casual</button>
+        <button class="tono-btn" onclick="toggleTono(this, 'Técnico')">⚙️ Técnico</button>
+        <button class="tono-btn" onclick="toggleTono(this, 'Creativo')">🎨 Creativo</button>
+        <button class="tono-btn" onclick="toggleTono(this, 'Persuasivo')">🎯 Persuasivo</button>
+        <button class="tono-btn" onclick="toggleTono(this, 'Empático')">💙 Empático</button>
+        <button class="tono-btn" onclick="toggleTono(this, 'Conciso')">⚡ Conciso</button>
+        <button class="tono-btn" onclick="toggleTono(this, 'Académico')">📚 Académico</button>
+        <button class="tono-btn" onclick="toggleTono(this, 'Humorístico')">😄 Humorístico</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORMATO DE SALIDA -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📋</span>
+      <span class="section-title">Formato de Salida</span>
+      <span class="section-badge">OPCIONAL</span>
+    </div>
+    <div class="section-body">
+      <p class="hint">¿Cómo quieres recibir la respuesta? Selecciona el formato ideal.</p>
+      <div class="formato-grid" id="formatoGrid">
+        <label class="formato-option" onclick="toggleFormato(this, 'Lista con viñetas')"><input type="checkbox">📝 Lista con viñetas</label>
+        <label class="formato-option" onclick="toggleFormato(this, 'Tabla comparativa')"><input type="checkbox">📊 Tabla</label>
+        <label class="formato-option" onclick="toggleFormato(this, 'Paso a paso numerado')"><input type="checkbox">🔢 Paso a paso</label>
+        <label class="formato-option" onclick="toggleFormato(this, 'Texto corrido')"><input type="checkbox">📖 Texto corrido</label>
+        <label class="formato-option" onclick="toggleFormato(this, 'Código con comentarios')"><input type="checkbox">💻 Código</label>
+        <label class="formato-option" onclick="toggleFormato(this, 'JSON estructurado')"><input type="checkbox">🔧 JSON</label>
+        <label class="formato-option" onclick="toggleFormato(this, 'Markdown con secciones')"><input type="checkbox">📑 Markdown</label>
+        <label class="formato-option" onclick="toggleFormato(this, 'Resumen ejecutivo')"><input type="checkbox">📌 Resumen ejecutivo</label>
+      </div>
+      <div style="margin-top: 12px;">
+        <input type="text" id="formatoExtra" placeholder="Longitud deseada, idioma, otro requisito de formato..." oninput="generarPrompt()">
+      </div>
+    </div>
+  </div>
+
+  <!-- RAZONAMIENTO -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🧠</span>
+      <span class="section-title">Instrucciones de Razonamiento</span>
+      <span class="section-badge">AVANZADO</span>
+    </div>
+    <div class="section-body">
+      <p class="hint">Indica cómo quieres que la IA razone. Chain-of-thought, autocrítica, alternativas, etc.</p>
+      <textarea id="razonamiento" rows="2" placeholder="Ej: Piensa paso a paso antes de responder. Evalúa al menos 3 alternativas. Al final, indica tu nivel de confianza y posibles limitaciones de tu respuesta..." oninput="generarPrompt()"></textarea>
+    </div>
+  </div>
+
+  <div class="divider">Prompt generado</div>
+
+  <!-- OUTPUT -->
+  <div class="output-section">
+    <div class="output-header">
+      <span class="output-title">⚡ Tu Prompt Optimizado</span>
+      <span style="font-size:11px; color: var(--muted);" id="charCount">0 chars</span>
+    </div>
+    <div class="output-body" id="outputText"></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" onclick="copiarPrompt()">
+      📋 Copiar Prompt
+    </button>
+    <button class="btn btn-secondary" onclick="exportarTXT()">
+      💾 Guardar .txt
+    </button>
+    <button class="btn btn-danger" onclick="limpiarTodo()">
+      🗑️ Limpiar Todo
+    </button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">✓ Prompt copiado al portapapeles</div>
+
+<script>
+  let tonosSeleccionados = [];
+  let formatosSeleccionados = [];
+
+  function setChip(id, val) {
+    document.getElementById(id).value = val;
+    generarPrompt();
+  }
+
+  function toggleTono(btn, tono) {
+    btn.classList.toggle('selected');
+    if (tonosSeleccionados.includes(tono)) {
+      tonosSeleccionados = tonosSeleccionados.filter(t => t !== tono);
+    } else {
+      tonosSeleccionados.push(tono);
+    }
+    generarPrompt();
+  }
+
+  function toggleFormato(label, formato) {
+    setTimeout(() => {
+      label.classList.toggle('selected');
+      if (formatosSeleccionados.includes(formato)) {
+        formatosSeleccionados = formatosSeleccionados.filter(f => f !== formato);
+      } else {
+        formatosSeleccionados.push(formato);
+      }
+      generarPrompt();
+    }, 0);
+  }
+
+  function generarPrompt() {
+    const partes = [];
+
+    const rol = document.getElementById('rol').value.trim();
+    const contexto = document.getElementById('contexto').value.trim();
+    const tarea = document.getElementById('tarea').value.trim();
+    const ejemplos = document.getElementById('ejemplos').value.trim();
+    const restricciones = document.getElementById('restricciones').value.trim();
+    const formatoExtra = document.getElementById('formatoExtra').value.trim();
+    const razonamiento = document.getElementById('razonamiento').value.trim();
+
+    if (rol) partes.push(`## ROL\n${rol}`);
+    if (contexto) partes.push(`## CONTEXTO\n${contexto}`);
+    if (tarea) partes.push(`## TAREA\n${tarea}`);
+    if (ejemplos) partes.push(`## EJEMPLOS / REFERENCIAS\n${ejemplos}`);
+    if (restricciones) partes.push(`## RESTRICCIONES\n${restricciones}`);
+    if (tonosSeleccionados.length > 0) partes.push(`## TONO\nUsa un tono: ${tonosSeleccionados.join(', ')}.`);
+    if (formatosSeleccionados.length > 0 || formatoExtra) {
+      let fmtStr = '## FORMATO DE SALIDA\n';
+      if (formatosSeleccionados.length > 0) fmtStr += `Presenta la respuesta en formato: ${formatosSeleccionados.join(', ')}.`;
+      if (formatoExtra) fmtStr += (formatosSeleccionados.length > 0 ? ' ' : '') + formatoExtra;
+      partes.push(fmtStr);
+    }
+    if (razonamiento) partes.push(`## INSTRUCCIONES DE RAZONAMIENTO\n${razonamiento}`);
+
+    const output = partes.join('\n\n');
+    const el = document.getElementById('outputText');
+    el.textContent = output;
+    document.getElementById('charCount').textContent = output.length + ' chars';
+  }
+
+  function copiarPrompt() {
+    const texto = document.getElementById('outputText').textContent;
+    if (!texto) return;
+    navigator.clipboard.writeText(texto).then(() => {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    });
+  }
+
+  function exportarTXT() {
+    const texto = document.getElementById('outputText').textContent;
+    if (!texto) return;
+    const blob = new Blob([texto], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'prompt-optimizado.txt';
+    a.click();
+  }
+
+  function limpiarTodo() {
+    ['rol','contexto','tarea','ejemplos','restricciones','formatoExtra','razonamiento']
+      .forEach(id => document.getElementById(id).value = '');
+    tonosSeleccionados = [];
+    formatosSeleccionados = [];
+    document.querySelectorAll('.tono-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('.formato-option').forEach(l => l.classList.remove('selected'));
+    document.getElementById('outputText').textContent = '';
+    document.getElementById('charCount').textContent = '0 chars';
+  }
+</script>
+</body>
+</html>
